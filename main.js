@@ -809,3 +809,18 @@ function seedshuffle(array, seed) {
     }
     return array;
 }
+
+function progress (json) {
+    if(! window.localStorage){
+        alert("Your browser do not support localstorage! Please change a browser.");
+        return false;
+    }else{
+        if(!json){
+            return localStorage.getItem("checkpoint");
+        }else{
+            localStorage.setItem("checkpoint", json);
+            return true
+        }
+    }
+    
+}
