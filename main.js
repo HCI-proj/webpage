@@ -12,6 +12,18 @@ var IF = 0;
 //vars related to phrase
 var phrasecount = 0;
 var totalcount = 0;
+//Read the local storage, how many sentences the user has completed so far, Continue the previous work
+if(! window.localStorage){
+    alert("Your browser do not support localstorage! Please change a browser.");
+}else{
+
+    previous=localStorage.getItem("count")
+    if(previous){
+        phrasecount=Number(previous);
+    }
+    
+}
+
 var phraselimit = 0;
 var Allphrases = [];
 var allphrases = [];
@@ -20,9 +32,18 @@ var PresentString = "";
 //vars related to log
 var AllJson = [];
 var keywordJson=[];
-var ItemJson = { Transcribe: [], Action: [] };
+//var ItemJson = { Transcribe: [], Action: [] };
+var ItemJson = {};
 var ItemLog = "";
 var CurrentJson;
+
+//Read the saved JSON
+saved_json=progress()
+if(saved_json){
+    AllJson = JSON.parse(saved_json);
+    CurrentJson = AllJson;
+}
+
 var DefaultName = "Keywords"
 
 //keywords rating var
@@ -102,7 +123,7 @@ function processFile(e) {
         $('#phraseCount').html('Phrase Count ');
         clearContent();
         AllJson = [];
-        ItemJson = { Transcribe: [], Action: [] };
+        //ItemJson = { Transcribe: [], Action: [] };
     }
 }
 
@@ -129,7 +150,7 @@ $("#Shuffle").click(function(){
         $('#phraseCount').html('Phrase Count ');
         clearContent();
         AllJson = [];
-        ItemJson = { Transcribe: [], Action: [] };
+        //ItemJson = { Transcribe: [], Action: [] };
 })
 
 //refresh process
@@ -163,12 +184,12 @@ $("#Transcribe").bind("keyup click focus input propertychange", function() {
         return; //check to prevent multiple simultaneous triggers
     }
     
-    ItemJson["Transcribe"].push({Text: currentVal, TimeStamp: Date.now()})
+    //ItemJson["Transcribe"].push({Text: currentVal, TimeStamp: Date.now()})
     
     var res = guessChangeInfo(oldVal, currentVal);
     var log = '<p><span class="yellow">' + oldVal + ' -> ' + currentVal + '</span></p>';
     log += compareNlog(res, oldVal, currentVal);
-    ItemJson["Action"].push(res)
+    //ItemJson["Action"].push(res)
     
 	if (res[0] == 'delete' || res[0] == 'replace'){
         strs = getIFc(oldVal, PresentString, res[1], res[2])
@@ -215,23 +236,30 @@ $("#Next").click(function() {
         // console.log(ratings);
         
         //ItemJson["Trial"] = phrasecount;
-        //ItemJson["Present"] = PresentString;
+        ItemJson["Present"] = PresentString;
         //ItemJson["IF"] = IF, ItemJson["INF"] = res[0], ItemJson["C"] = res[1];
         //ItemJson["CER"] = (IF/(IF+res[1]+res[0])).toFixed(3) 
         //ItemJson["UER"] = (res[0]/(IF+res[1]+res[0])).toFixed(3) 
         //ItemJson["TER"] = ((IF+res[0])/(IF+res[1]+res[0])).toFixed(3)
-        ItemJson["Transcribed"] = tsequence[tsequence.length - 1].trim();
+        ItemJson["keywords"] = tsequence[tsequence.length - 1].trim();
         ItemJson["Ratings"] = ratings;
-        let ts = ItemJson["Transcribe"]
-        ItemJson["Time"] = ts[ts.length-1].TimeStamp - ts[0].TimeStamp;
-        //AllJson.push(JSON.parse(JSON.stringify(ItemJson)));
-        ItemJson = { Transcribe: [], Action: [] };
-        
+        //let ts = ItemJson["Transcribe"]
+        //ItemJson["Time"] = ts[ts.length-1].TimeStamp - ts[0].TimeStamp;
+        AllJson.push(JSON.parse(JSON.stringify(ItemJson)));
+        //ItemJson = { Transcribe: [], Action: [] };
+        //ItemJson = {}
         clearContent();
-        
+        //let AllJson equal CurrentJson (The same effect as clicking Analysis button)
+        CurrentJson = AllJson;
+        //Save the JSON to the local storage, using progress function
+        progress(CurrentJson)
         phrasecount += 1
+        console.log(phrasecount)
+        //save the Record how many sentences the user has completed so far
         totalcount += 1
-        
+        console.log(totalcount)
+        localStorage.setItem("count", phrasecount);
+
         if (phraselimit > 0 && totalcount >= phraselimit)
             $('#phraseCount').html('<inline style="color:red;"> Task Done!</inline>')
         
@@ -628,7 +656,7 @@ function ENWalignment(seq1, seq2) {
 //following are download and format
 $("#Download").click(function(){
     if (CurrentJson == null){
-        alert('Please analyze first!');
+        alert('There are no data to be downloaded. Please ranking first!');
         return;
     }
     var fname = DefaultName
@@ -818,7 +846,7 @@ function progress (json) {
         if(!json){
             return localStorage.getItem("checkpoint");
         }else{
-            localStorage.setItem("checkpoint", json);
+            localStorage.setItem("checkpoint", JSON.stringify(json));
             return true
         }
     }
