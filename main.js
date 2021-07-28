@@ -19,13 +19,23 @@ var PresentString = "";
 
 //vars related to log
 var AllJson = [];
+var keywordJson=[];
 var ItemJson = { Transcribe: [], Action: [] };
 var ItemLog = "";
 var CurrentJson;
-var DefaultName = "TextTest"
-var keywordsJson = {keywords:[]}
+var DefaultName = "Keywords"
+
+//keywords rating var
+var kwLength = 0
+var startRating = false;
+
 //logic vars
 var Started = false;
+
+//rating
+$('.rating')
+  .rating('setting', 'clearable', true)
+;
 
 $('.ui.accordion')
   .accordion()
@@ -41,6 +51,24 @@ $.ajax({
     $('#Present').html(PresentString);
 }
 });
+
+// side bar stuff and page transition
+$(".ui.sidebar").sidebar()
+                .sidebar('attach events','.ui.launch.button');
+
+$(".ui.sidebar a").click(function(event){
+    $("#tutorial-sec").hide();
+    $("#reference-sec").hide();
+    $("#main-sec").hide();
+    let target = event.target;
+    if (target.id == "page1")
+        $("#main-sec").show();
+    else if (target.id == "page2")
+        $("#tutorial-sec").show();
+    else
+        $("#reference-sec").show();
+    $(".ui.sidebar").sidebar("toggle");
+})
 
 // actions in settings
 $("#upload").click(function(){
@@ -111,6 +139,9 @@ function clearContent(){
         [0, 0]
     ], oldVal = "", last_position = 0;
     $("#LogDisplay").html(ItemLog);
+    $('#ratingList').html('');
+    startRating = false;
+    $("#Next").html('Rate');
     ItemLog = "";
 }
 
@@ -153,57 +184,85 @@ $("#Transcribe").bind("keyup click focus input propertychange", function() {
     $('#LogDisplay').scrollTop( $('#LogDisplay').prop("scrollHeight") );
 });
 
-$("#Transcribe").keypress(function(){
-    var key = window.event.keyCode;
-    if (key == 13){ // enter pressed
-        if ($("#EnterNext").prop("checked")){
-            $("#Next").click();
-            return false;
-        }
+// $("#Transcribe").keypress(function(){
+//     var key = window.event.keyCode;
+//     if (key == 13 && !startRating){ // enter pressed
+//         if ($("#EnterNext").prop("checked")){
+//             $("#Next").click();  
+//             return false;
+//         }
+//     }
+//     return true;
+// }) 
+
+$(document).keyup(function(event) {
+    if (event.which === 13 && $("#EnterNext").prop("checked")) {
+        $("#Next").click();
     }
-    return true;
-})
+});
 
 $("#Next").click(function() {
     if ( !$("#Transcribe").val() ) return;
-    res = getGuessResult(PresentString, tsequence[tsequence.length - 1]);
-    ItemLog = ("<p>Change Result: INF " + res[0] + " IF " + IF + " C " + res[1] + "</p>" + ItemLog);
+
+    if (startRating){
+        res = getGuessResult(PresentString, tsequence[tsequence.length - 1]);
+        ItemLog = ("<p>Change Result: INF " + res[0] + " IF " + IF + " C " + res[1] + "</p>" + ItemLog);
     
-    ItemJson["Trial"] = phrasecount;
-    ItemJson["Present"] = PresentString;
-    ItemJson["IF"] = IF, ItemJson["INF"] = res[0], ItemJson["C"] = res[1];
-    ItemJson["CER"] = (IF/(IF+res[1]+res[0])).toFixed(3) 
-    ItemJson["UER"] = (res[0]/(IF+res[1]+res[0])).toFixed(3) 
-    ItemJson["TER"] = ((IF+res[0])/(IF+res[1]+res[0])).toFixed(3)
-    ItemJson["Transcribed"] = tsequence[tsequence.length - 1];
-    let ts = ItemJson["Transcribe"]
-    ItemJson["Time"] = ts[ts.length-1].TimeStamp - ts[0].TimeStamp;
-    AllJson.push(JSON.parse(JSON.stringify(ItemJson)));
-    ItemJson = { Transcribe: [], Action: [] };
-    
-    clearContent();
-    
-    phrasecount += 1
-    totalcount += 1
-    
-    if (phraselimit > 0 && totalcount >= phraselimit)
-        $('#phraseCount').html('<inline style="color:red;"> Task Done!</inline>')
-    
-    if (phrasecount >= allphrases.length){
-        phrasecount = 0;
+        var ratings = [];
+        for (let i = 0; i < kwLength; i++) {
+            ratings.push($('#kwr'+i).rating('get rating'));
+        }
+        // console.log(ratings);
+        
+        //ItemJson["Trial"] = phrasecount;
+        //ItemJson["Present"] = PresentString;
+        //ItemJson["IF"] = IF, ItemJson["INF"] = res[0], ItemJson["C"] = res[1];
+        //ItemJson["CER"] = (IF/(IF+res[1]+res[0])).toFixed(3) 
+        //ItemJson["UER"] = (res[0]/(IF+res[1]+res[0])).toFixed(3) 
+        //ItemJson["TER"] = ((IF+res[0])/(IF+res[1]+res[0])).toFixed(3)
+        ItemJson["Transcribed"] = tsequence[tsequence.length - 1].trim();
+        ItemJson["Ratings"] = ratings;
+        let ts = ItemJson["Transcribe"]
+        ItemJson["Time"] = ts[ts.length-1].TimeStamp - ts[0].TimeStamp;
+        //AllJson.push(JSON.parse(JSON.stringify(ItemJson)));
+        ItemJson = { Transcribe: [], Action: [] };
+        
+        clearContent();
+        
+        phrasecount += 1
+        totalcount += 1
+        
+        if (phraselimit > 0 && totalcount >= phraselimit)
+            $('#phraseCount').html('<inline style="color:red;"> Task Done!</inline>')
+        
+        if (phrasecount >= allphrases.length){
+            phrasecount = 0;
+        }
+        PresentString = allphrases[phrasecount].replace(/^\s+|\s+$/g, '')
+        $('#Present').html(PresentString)
+        
+        if ($('#phraseCount').html().startsWith('Phrase')){
+            $('#phraseCount').html('Phrase Count '+totalcount)
+        }
+        $("#Redo").prop('disabled', false);
     }
-    PresentString = allphrases[phrasecount].replace(/^\s+|\s+$/g, '')
-    $('#Present').html(PresentString)
-    
-    if ($('#phraseCount').html().startsWith('Phrase')){
-        $('#phraseCount').html('Phrase Count '+totalcount)
+    else{
+        var keywords = tsequence[tsequence.length - 1].trim().split(' ')
+        kwLength = keywords.length
+        var ratingItem = ''
+        keywords.forEach((element, index) => {
+            ratingItem += ('<div class="item">' + element + '<div class="ui tiny star rating" id="kwr' + index + '" data-rating="0" data-max-rating="5"></div></div>');
+            
+        } )
+        $('#ratingList').html(ratingItem);
+        $('.rating').rating('setting', 'clearable', true);
+        $("#Next").html('Next'); 
+        startRating = true;
     }
-    $("#Redo").prop('disabled', false);
 })
 
 $("#Redo").click(function(){
     AllJson.pop();
-    keywordsJson["keywords"].pop();
     clearContent();
     phrasecount -= 1
     totalcount -= 1
@@ -216,6 +275,20 @@ $("#Redo").click(function(){
     }
     $("#Redo").prop('disabled', true);
 })
+
+// $("#generate").click(function() {
+//     if ( !$("#Transcribe").val() ) return;
+    
+//     var keywords = tsequence[tsequence.length - 1].split(' ')
+//     kwLength = keywords.length
+//     var ratingItem = ''
+//     keywords.forEach((element, index) => {
+//         ratingItem += ('<div class="item">' + element + '<div class="ui tiny star rating" id="kwr' + index + '" data-rating="3" data-max-rating="5"></div></div>');
+        
+//     } )
+//     $('#ratingList').html(ratingItem);
+//     $('.rating').rating('setting', 'clearable', true);
+// })
 
 function cursor_changed(element) {
     var new_position = getCursorPosition(element);
@@ -606,7 +679,7 @@ $('#inputJson').change(function(){
                     DefaultName = textFile.name.split('.')[0]
                     CurrentJson = JSON.parse(file)
                     var visRule = defVegaJson();
-                    vegaEmbed('#vis', visRule)
+                    //vegaEmbed('#vis', visRule)
                 }
         })
     } 
@@ -629,7 +702,7 @@ $("#Analysis").click(function(){
         DefaultName = "Log";
         CurrentJson = AllJson;
         var visRule = defVegaJson();
-        vegaEmbed('#vis', visRule)
+        //vegaEmbed('#vis', visRule)
     }
 })
 

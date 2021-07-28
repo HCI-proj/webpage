@@ -10,41 +10,62 @@
 
 <body>
     
+<div class="ui sidebar inverted left vertical menu " style="display: none;">
+    <a class="item">
+        <br><br>
+    </a>
+    <a class="item" >
+      <h3 id="page1">Main Page</h3>
+    </a>
+    <a class="item" >
+      <h3 id="page2">How to use?</h3>
+    </a>
+    <a class="item" >
+      <h3 id="page3">Reference of the JSON and CSV file variable names</h3>
+    </a>
+</div>
+    <!--<div class="pusher">
+    <div class="ui black big launch right attached button">
+        <i class="icon list layout"></i>
+    </div>-->
     
     <div class="ui center aligned header" id="Title">
         <h1>Keywords Ranking</h1>
-           
+        <a href="https://github.com/hdacnw/hdacnw.github.io" target="_blank" id="aboutlink">Source Code</a>    
     </div>
     
     <div id="main-sec" >
 
         <div class="ui text container">
-          <div class="ui segment">Instruction:<br> <b>First Step:</b> Please select the keywords from the following sentence. <br><b>Second Step:</b> Give each keyword an importance score from 1~7.
-            <br>For example:<br> Given sentence: My watch fell in the water. We can select "watch", "fell", "water" as keywords. Then we enter the following data in to the textarea below:<br>
-            watch,6<br>
-            fell,7<br>
-            water,5<br>
-            <b>Notice:</b> Each keyword occupies one line, use "," to separate the keyword and score
-            </div>
+            <div class="ui segment">Instruction:<br> <b>First Step:</b> Please select the keywords from the following sentence. <br><b>Second Step:</b> Rate each keyword base on importance.
+              <br>For example:<br> Given sentence: My watch fell in the water. We can select "watch", "fell", "water" as keywords. Then we enter the following data in to the textarea below:<br>
+              watch fell water<br>
+              <b>Notice:</b> "Blank" to separate the different keyword
+              </div>
             <div class="ui segment" id="Present">Loading...</div>
-            <textarea class="ui raised segment" id="Transcribe" spellcheck="false">
-keyword1,2
-keyword2,7
-keyword3,5
-...
-            </textarea>
+            <textarea class="ui raised segment" id="Transcribe" spellcheck="false"></textarea>
             <div class="ui fitted divider" style="border-color:white;"></div>
             <div id="AlignBtn" class="ui stackable">
-                <span id="phraseCount" >Sentence Count </span>
+                <span id="phraseCount" >Phrase Count </span>
                 <button class="ui tiny button" id="Redo" disabled="disabled">
                     <i class="undo icon"></i>Redo
                 </button>
                 <div class="ui checkbox">
                     <input type="checkbox" id="EnterNext">
-                    <label>Use Enter for Next</label>
+                    <label>Use Enter for Button Press</label>
                 </div>
-                <button class="ui green button" id="Next">Next</button>
+                <button class="ui green button" id="Next">Rate</button>
             </div>
+        </div>
+
+        <p></p>
+
+        <div class="ui text container">
+          <div class="ui raised padded text container segment">
+            <h3 class="ui header">Rate keywords below!</h3>
+            <div class="ui list" id="ratingList"></div>
+            <!-- <button class="ui teal button" id="generate">Rate</button> -->
+          </div>
         </div>
         
         <div class="ui text container" id="SettingDevider" style="display: none;">
@@ -97,7 +118,7 @@ keyword3,5
             <div class="ui styled fluid accordion" style="display: none;">
                 <div class="title">
                     <i class="dropdown icon"></i>
-                        Result
+                        Log
                 </div>
                 <div class="content">
                     <pre class="ui inverted grey stacked segment" id="LogDisplay">
@@ -108,17 +129,17 @@ keyword3,5
         
         <div class="ui text container middle aligned stackable grid">
             <div class="four wide column">
-                <button class="small ui blue button" id="Analysis" style="display: none;">Analyze</button>
+                <button class="small ui blue button" id="Analysis">Analyze</button>
             </div>
             <div class="right aligned column ">
                 <div class="ui action mini input">
-                  <input type="text" placeholder="Result" id="Filename">
+                  <input type="text" placeholder="result" id="Filename">
                   <select class="ui dropdown" id="Selectformat">
                     <option value="0">.json</option>
-                    <!--<option value="1">.csv</option>-->
+       
                   </select>
                     &nbsp;
-                    <button class="small ui icon blue button" id="Download"> Download Result</button>
+                    <button class="small ui icon blue button" id="Download"> Download result</button>
                     &nbsp;
                     <input type="file" id="inputJson" size="chars">
                     <!--<button class="small blue ui button" id="UploadJSON">Upload log</button>-->
