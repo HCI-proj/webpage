@@ -855,6 +855,7 @@ function progress (json) {
                   "Content-Type": "application/json"
                 },
                 "data": JSON.stringify({"result":JSON.stringify(json)}),
+                "error":function () {alert("An error occurred while synchronizing data with the server, please check the network connection")}
               };
               
               $.ajax(settings).done(function (response) {
