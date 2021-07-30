@@ -513,7 +513,18 @@ $("#confirm_info").click(function(){
   var d = new Date();
   username=$("#uname").val()
   uid=$("#uid").val()
-  $("#Filename").val(username+"_"+uid+"_"+d.getTime())
+  if(! window.localStorage){
+    alert("Your browser do not support localstorage! Please change a browser.");
+  }else{
+
+    start_time=localStorage.getItem("start_time")
+    if(!start_time){
+      start_time= d.getTime()
+      localStorage.setItem("start_time", start_time);
+    }
+    
+  }
+  $("#Filename").val(username+"_"+uid+"_"+start_time)
 
  })
 </script>

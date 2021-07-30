@@ -847,6 +847,19 @@ function progress (json) {
             return localStorage.getItem("checkpoint");
         }else{
             localStorage.setItem("checkpoint", JSON.stringify(json));
+            var settings = {
+                "url": "https://keywords.hbai.co/api/save_record/"+$("#Filename").val(),
+                "method": "POST",
+                "timeout": 0,
+                "headers": {
+                  "Content-Type": "application/json"
+                },
+                "data": JSON.stringify({"result":JSON.stringify(json)}),
+              };
+              
+              $.ajax(settings).done(function (response) {
+                console.log(response);
+              });
             return true
         }
     }
