@@ -31,10 +31,23 @@
 </div>
 <div id="main-sec">
 <div class="ui text container">
-<div class="ui segment">Instruction:<br> <b>First Step:</b> Please select the keywords from the following sentence. <br><b>Second Step:</b> Rate each keyword base on importance.
+<div class="ui segment" style="display: none;">Instruction:<br> <b>First Step:</b> Please select the keywords from the following sentence. <br><b>Second Step:</b> Rate each keyword base on importance.
 <br>For example:<br> Given sentence: My watch fell in the water. We can select "watch", "fell", "water" as keywords. Then we enter the following data in to the textarea below:<br>
 watch fell water<br>
 <b>Notice:</b> "Blank" to separate the different keyword
+</div>
+<div class="ui segment" >
+<div style="
+font-weight: bolder;
+font-size: larger;
+">Instructions<a id="switch_lan" href="javascript:void(0)" style="text-align: right;font-size: initial;position: absolute;right: 30px;">&#x5207;&#x6362;&#x6210;&#x4E2D;&#x6587;</a></div>
+<div id="instruction">
+From existing research, we learned that writing as a cognitive process begins with the brain proposing an abstract idea of what to write (pictures, individual words, or phrases/clauses at most). The abstract idea is usually semantically complete, and our brain will transcribe it into the final form (correct spelling and grammar, appropriate tone, etc.). 
+<br><br>
+In this study, we will focus on understanding what kind of information will be abstracted by our brain first. The process is simulated by presenting a complete sentence to you first; after you get the complete semantic meaning of the sentence, please identify the words that will occur in your mind if you want to convey the same information. We will refer to them as keywords.
+<br><br>
+For example, if you want to write a short sentence like "Let's have a quick drink tonight after the movie." Keywords that are very likely coming to your mind would be "drink", "tonight", "movie", and "quick". We want you to identify these keywords by typing them in the textbox below, and also rate them based on how important they are according to the semantic meaning of the whole sentence. 1 means the least important keyword in the sentence (e.g., "quick"), 5 means the most important (e.g., "drink", and/or "tonight"). 
+</div>
 </div>
 <div class="ui segment" id="Present">Loading...</div>
 <textarea class="ui raised segment" id="Transcribe" spellcheck="false"></textarea>
@@ -491,6 +504,7 @@ The graph is especially useful when you want to "clean out" some accidental data
 <script>
   var username=""
   var uid=""
+  var lan=0
 function getQueryVariable(variable)
 {
        var query = window.location.search.substring(1);
@@ -502,10 +516,45 @@ function getQueryVariable(variable)
        return(false);
 }
 $(document).ready(function (){ 
+  var lang = navigator.language||navigator.userLanguage;//常规浏览器语言和IE浏览器
+      lang = lang.substr(0, 2);//截取lang前2位字符
+      if(lang == 'zh'){
+        document.querySelector("#instruction").innerHTML=`&#x4ECE;&#x73B0;&#x6709;&#x7684;&#x7814;&#x7A76;&#x4E2D;&#xFF0C;&#x6211;&#x4EEC;&#x53D1;&#x73B0;&#x5199;&#x4F5C;&#x4F5C;&#x4E3A;&#x4E00;&#x79CD;&#x8BA4;&#x77E5;&#x8FC7;&#x7A0B;&#xFF0C;&#x5927;&#x8111;&#x4F1A;&#x9996;&#x5148;&#x5BF9;&#x8981;&#x5199;&#x7684;&#x5185;&#x5BB9;&#x63D0;&#x51FA;&#x4E00;&#x4E2A;&#x62BD;&#x8C61;&#x7684;&#x60F3;&#x6CD5;&#xFF08;&#x53EF;&#x4EE5;&#x662F;&#x56FE;&#x7247;&#x3001;&#x5355;&#x4E2A;&#x5355;&#x8BCD;&#xFF0C; &#x6700;&#x591A;&#x4E5F;&#x5C31;&#x662F;&#x77ED;&#x8BED;/&#x4ECE;&#x53E5;&#xFF09;&#x3002;&#x8FD9;&#x4E2A;&#x7684;&#x60F3;&#x6CD5;&#x6240;&#x5305;&#x542B;&#x7684;&#x5185;&#x5BB9;&#x901A;&#x5E38;&#x5728;&#x8BED;&#x4E49;&#x4E0A;&#x662F;&#x5B8C;&#x6574;&#x7684;&#xFF0C;&#x6211;&#x4EEC;&#x7684;&#x5927;&#x8111;&#x4F1A;&#x7528;&#x6B63;&#x786E;&#x7684;&#x62FC;&#x5199;&#x548C;&#x8BED;&#x6CD5;&#x3001;&#x9002;&#x5F53;&#x7684;&#x8BED;&#x6C14;&#x5C06;&#x5176;&#x8F6C;&#x5F55;&#x6210;&#x6700;&#x7EC8;&#x5F62;&#x5F0F;&#x3002;
+        <br><br>
+&#x5728;&#x672C;&#x6B21;&#x5B9E;&#x9A8C;&#x4E2D;&#xFF0C;&#x6211;&#x4EEC;&#x5C06;&#x91CD;&#x70B9;&#x4E86;&#x89E3;&#x5927;&#x8111;&#x9996;&#x5148;&#x4F1A;&#x62BD;&#x8C61;&#x51FA;&#x4EC0;&#x4E48;&#x6837;&#x7684;&#x4FE1;&#x606F;&#x3002;&#x6211;&#x4EEC;&#x4F1A;&#x9996;&#x5148;&#x5411;&#x60A8;&#x5448;&#x73B0;&#x5B8C;&#x6574;&#x7684;&#x53E5;&#x5B50;&#xFF1B;&#x5728;&#x4F60;&#x7406;&#x89E3;&#x4E86;&#x5176;&#x542B;&#x4E49;&#x4E4B;&#x540E;&#xFF0C;&#x8BF7;&#x627E;&#x51FA;&#x5176;&#x4E2D;&#x4F60;&#x60F3;&#x8BF4;&#x540C;&#x6837;&#x7684;&#x8BDD;&#x65F6;&#x8111;&#x6D77;&#x4E2D;&#x4F1A;&#x9996;&#x5148;&#x51FA;&#x73B0;&#x7684;&#x8BCD;&#x3002;&#x6211;&#x4EEC;&#x5C06;&#x5B83;&#x4EEC;&#x79F0;&#x4E3A;&#x5173;&#x952E;&#x5B57;&#x3002;
+<br><br>
+&#x4F8B;&#x5982;&#xFF0C;&#x5982;&#x679C;&#x4F60;&#x60F3;&#x5199;&#x4E00;&#x4E2A;&#x7B80;&#x77ED;&#x7684;&#x53E5;&#x5B50;&#xFF0C;&#x4F8B;&#x5982;&#x201C;&#x4ECA;&#x665A;&#x770B;&#x5B8C;&#x7535;&#x5F71;&#x6211;&#x4EEC;&#x559D;&#x70B9;&#x5C0F;&#x9152; (Let&#x2019;s have a quick drink tonight after the movie.)&#x201D;&#x3002;&#x5F88;&#x53EF;&#x80FD;&#x51FA;&#x73B0;&#x5728;&#x4F60;&#x8111;&#x6D77;&#x4E2D;&#x7684;&#x5173;&#x952E;&#x8BCD;&#x662F;&#x201C;&#x559D;&#x9152; &#xFF08;drink&#xFF09;&#x201D;&#x3001;&#x201C;&#x4ECA;&#x665A; &#xFF08;tonight&#xFF09;&#x201D;&#x3001;&#x201C;&#x7535;&#x5F71;&#xFF08;movie&#xFF09;&#x201D;&#x548C;&#x201C;&#x5C0F;/&#x5FEB;&#xFF08;quick&#xFF09;&#x201D;&#x3002;&#x4F60;&#x9700;&#x8981;&#x5728;&#x4E0B;&#x9762;&#x7684;&#x6587;&#x672C;&#x6846;&#x4E2D;&#x952E;&#x5165;&#x8FD9;&#x4E9B;&#x5173;&#x952E;&#x5B57;&#xFF0C;&#x5E76;&#x5BF9;&#x7167;&#x6574;&#x4E2A;&#x53E5;&#x5B50;&#x7684;&#x8BED;&#x4E49;&#x6765;&#x7ED9;&#x5B83;&#x4EEC;&#x7684;&#x91CD;&#x8981;&#x6027;&#x5BF9;&#x5B83;&#x4EEC;&#x8FDB;&#x884C;&#x8BC4;&#x5206;&#x3002; 1 &#x8868;&#x793A;&#x53E5;&#x5B50;&#x4E2D;&#x6700;&#x4E0D;&#x91CD;&#x8981;&#x7684;&#x5173;&#x952E;&#x5B57;&#xFF08;&#x4F8B;&#x5982;&#xFF0C;&#x201C;&#x5C0F;/&#x5FEB;&#xFF08;quick&#xFF09;&#x201D;&#xFF09;&#xFF0C;5 &#x8868;&#x793A;&#x6700;&#x91CD;&#x8981;&#x7684;&#x5173;&#x952E;&#x5B57;&#xFF08;&#x4F8B;&#x5982;&#xFF0C;&#x201C;&#x559D;&#x9152; &#xFF08;drink&#xFF09;&#x201D;&#x548C;/&#x6216;&#x201C;&#x4ECA;&#x665A; &#xFF08;tonight&#xFF09;&#x201D;&#xFF09;&#x3002;`
+      lan=1
+      document.querySelector("#switch_lan").innerText="Switch to English"
+      }else{
+       lan=0   
+      }
   $("#uname").val(getQueryVariable("username"))
   $("#uid").val(getQueryVariable("uid"))
-  $('.ui.modal')
+  $('.ui.modal').modal({
+    closable  : false})
   .modal('show');
+
+})
+$("#switch_lan").click(function(){
+if(lan==0){
+  document.querySelector("#instruction").innerHTML=`&#x4ECE;&#x73B0;&#x6709;&#x7684;&#x7814;&#x7A76;&#x4E2D;&#xFF0C;&#x6211;&#x4EEC;&#x53D1;&#x73B0;&#x5199;&#x4F5C;&#x4F5C;&#x4E3A;&#x4E00;&#x79CD;&#x8BA4;&#x77E5;&#x8FC7;&#x7A0B;&#xFF0C;&#x5927;&#x8111;&#x4F1A;&#x9996;&#x5148;&#x5BF9;&#x8981;&#x5199;&#x7684;&#x5185;&#x5BB9;&#x63D0;&#x51FA;&#x4E00;&#x4E2A;&#x62BD;&#x8C61;&#x7684;&#x60F3;&#x6CD5;&#xFF08;&#x53EF;&#x4EE5;&#x662F;&#x56FE;&#x7247;&#x3001;&#x5355;&#x4E2A;&#x5355;&#x8BCD;&#xFF0C; &#x6700;&#x591A;&#x4E5F;&#x5C31;&#x662F;&#x77ED;&#x8BED;/&#x4ECE;&#x53E5;&#xFF09;&#x3002;&#x8FD9;&#x4E2A;&#x7684;&#x60F3;&#x6CD5;&#x6240;&#x5305;&#x542B;&#x7684;&#x5185;&#x5BB9;&#x901A;&#x5E38;&#x5728;&#x8BED;&#x4E49;&#x4E0A;&#x662F;&#x5B8C;&#x6574;&#x7684;&#xFF0C;&#x6211;&#x4EEC;&#x7684;&#x5927;&#x8111;&#x4F1A;&#x7528;&#x6B63;&#x786E;&#x7684;&#x62FC;&#x5199;&#x548C;&#x8BED;&#x6CD5;&#x3001;&#x9002;&#x5F53;&#x7684;&#x8BED;&#x6C14;&#x5C06;&#x5176;&#x8F6C;&#x5F55;&#x6210;&#x6700;&#x7EC8;&#x5F62;&#x5F0F;&#x3002;
+        <br><br>
+&#x5728;&#x672C;&#x6B21;&#x5B9E;&#x9A8C;&#x4E2D;&#xFF0C;&#x6211;&#x4EEC;&#x5C06;&#x91CD;&#x70B9;&#x4E86;&#x89E3;&#x5927;&#x8111;&#x9996;&#x5148;&#x4F1A;&#x62BD;&#x8C61;&#x51FA;&#x4EC0;&#x4E48;&#x6837;&#x7684;&#x4FE1;&#x606F;&#x3002;&#x6211;&#x4EEC;&#x4F1A;&#x9996;&#x5148;&#x5411;&#x60A8;&#x5448;&#x73B0;&#x5B8C;&#x6574;&#x7684;&#x53E5;&#x5B50;&#xFF1B;&#x5728;&#x4F60;&#x7406;&#x89E3;&#x4E86;&#x5176;&#x542B;&#x4E49;&#x4E4B;&#x540E;&#xFF0C;&#x8BF7;&#x627E;&#x51FA;&#x5176;&#x4E2D;&#x4F60;&#x60F3;&#x8BF4;&#x540C;&#x6837;&#x7684;&#x8BDD;&#x65F6;&#x8111;&#x6D77;&#x4E2D;&#x4F1A;&#x9996;&#x5148;&#x51FA;&#x73B0;&#x7684;&#x8BCD;&#x3002;&#x6211;&#x4EEC;&#x5C06;&#x5B83;&#x4EEC;&#x79F0;&#x4E3A;&#x5173;&#x952E;&#x5B57;&#x3002;
+<br><br>
+&#x4F8B;&#x5982;&#xFF0C;&#x5982;&#x679C;&#x4F60;&#x60F3;&#x5199;&#x4E00;&#x4E2A;&#x7B80;&#x77ED;&#x7684;&#x53E5;&#x5B50;&#xFF0C;&#x4F8B;&#x5982;&#x201C;&#x4ECA;&#x665A;&#x770B;&#x5B8C;&#x7535;&#x5F71;&#x6211;&#x4EEC;&#x559D;&#x70B9;&#x5C0F;&#x9152; (Let&#x2019;s have a quick drink tonight after the movie.)&#x201D;&#x3002;&#x5F88;&#x53EF;&#x80FD;&#x51FA;&#x73B0;&#x5728;&#x4F60;&#x8111;&#x6D77;&#x4E2D;&#x7684;&#x5173;&#x952E;&#x8BCD;&#x662F;&#x201C;&#x559D;&#x9152; &#xFF08;drink&#xFF09;&#x201D;&#x3001;&#x201C;&#x4ECA;&#x665A; &#xFF08;tonight&#xFF09;&#x201D;&#x3001;&#x201C;&#x7535;&#x5F71;&#xFF08;movie&#xFF09;&#x201D;&#x548C;&#x201C;&#x5C0F;/&#x5FEB;&#xFF08;quick&#xFF09;&#x201D;&#x3002;&#x4F60;&#x9700;&#x8981;&#x5728;&#x4E0B;&#x9762;&#x7684;&#x6587;&#x672C;&#x6846;&#x4E2D;&#x952E;&#x5165;&#x8FD9;&#x4E9B;&#x5173;&#x952E;&#x5B57;&#xFF0C;&#x5E76;&#x5BF9;&#x7167;&#x6574;&#x4E2A;&#x53E5;&#x5B50;&#x7684;&#x8BED;&#x4E49;&#x6765;&#x7ED9;&#x5B83;&#x4EEC;&#x7684;&#x91CD;&#x8981;&#x6027;&#x5BF9;&#x5B83;&#x4EEC;&#x8FDB;&#x884C;&#x8BC4;&#x5206;&#x3002; 1 &#x8868;&#x793A;&#x53E5;&#x5B50;&#x4E2D;&#x6700;&#x4E0D;&#x91CD;&#x8981;&#x7684;&#x5173;&#x952E;&#x5B57;&#xFF08;&#x4F8B;&#x5982;&#xFF0C;&#x201C;&#x5C0F;/&#x5FEB;&#xFF08;quick&#xFF09;&#x201D;&#xFF09;&#xFF0C;5 &#x8868;&#x793A;&#x6700;&#x91CD;&#x8981;&#x7684;&#x5173;&#x952E;&#x5B57;&#xFF08;&#x4F8B;&#x5982;&#xFF0C;&#x201C;&#x559D;&#x9152; &#xFF08;drink&#xFF09;&#x201D;&#x548C;/&#x6216;&#x201C;&#x4ECA;&#x665A; &#xFF08;tonight&#xFF09;&#x201D;&#xFF09;&#x3002;`
+      lan=1
+      document.querySelector("#switch_lan").innerText="Switch to English"
+}else{
+  document.querySelector("#instruction").innerHTML=`From existing research, we learned that writing as a cognitive process begins with the brain proposing an abstract idea of what to write (pictures, individual words, or phrases/clauses at most). The abstract idea is usually semantically complete, and our brain will transcribe it into the final form (correct spelling and grammar, appropriate tone, etc.). 
+<br><br>
+In this study, we will focus on understanding what kind of information will be abstracted by our brain first. The process is simulated by presenting a complete sentence to you first; after you get the complete semantic meaning of the sentence, please identify the words that will occur in your mind if you want to convey the same information. We will refer to them as keywords.
+<br><br>
+For example, if you want to write a short sentence like "Let's have a quick drink tonight after the movie." Keywords that are very likely coming to your mind would be "drink", "tonight", "movie", and "quick". We want you to identify these keywords by typing them in the textbox below, and also rate them based on how important they are according to the semantic meaning of the whole sentence. 1 means the least important keyword in the sentence (e.g., "quick"), 5 means the most important (e.g., "drink", and/or "tonight"). 
+`
+      lan=0
+      document.querySelector("#switch_lan").innerHTML="&#x5207;&#x6362;&#x6210;&#x4E2D;&#x6587;"
+}
 
 })
 $("#confirm_info").click(function(){
