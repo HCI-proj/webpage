@@ -290,9 +290,9 @@ $("#Next").click(function() {
         } )
         $('#ratingList').html(ratingItem);
         $('.rating').rating('setting', 'clearable', true);
-        $("#Next").html('Next'); 
-        startRating = true;
+        $("#Next").html('Next');
         $("#redocurrent").prop('disabled', false);
+        startRating = true;
     }
 })
 
