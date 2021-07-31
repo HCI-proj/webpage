@@ -20,11 +20,12 @@ if(! window.localStorage){
     previous=localStorage.getItem("count")
     if(previous){
         phrasecount=Number(previous);
+        totalcount=phrasecount
     }
     
 }
 
-var phraselimit = 0;
+var phraselimit = 60;
 var Allphrases = [];
 var allphrases = [];
 var PresentString = "";
@@ -224,8 +225,9 @@ $(document).keyup(function(event) {
 
 $("#Next").click(function() {
     if ( !$("#Transcribe").val() ) return;
-    if(totalcount>Allphrases.length){
+    if(totalcount==Allphrases.length){
         alert("You have completed all the phrases, thank you for your participation!")
+        console.log("Done")
         return;
     }
     if (startRating){
