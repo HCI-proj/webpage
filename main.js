@@ -224,7 +224,10 @@ $(document).keyup(function(event) {
 
 $("#Next").click(function() {
     if ( !$("#Transcribe").val() ) return;
-
+    if(totalcount>Allphrases.length){
+        alert("You have completed all the phrases, thank you for your participation!")
+        return;
+    }
     if (startRating){
         res = getGuessResult(PresentString, tsequence[tsequence.length - 1]);
         ItemLog = ("<p>Change Result: INF " + res[0] + " IF " + IF + " C " + res[1] + "</p>" + ItemLog);
