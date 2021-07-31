@@ -240,7 +240,7 @@ $("#Next").click(function() {
         }
         // console.log(ratings);
         
-        //ItemJson["Trial"] = phrasecount;
+        ItemJson["Trial"] = phrasecount;
         ItemJson["Present"] = PresentString;
         //ItemJson["IF"] = IF, ItemJson["INF"] = res[0], ItemJson["C"] = res[1];
         //ItemJson["CER"] = (IF/(IF+res[1]+res[0])).toFixed(3) 
@@ -278,6 +278,7 @@ $("#Next").click(function() {
             $('#phraseCount').html('Phrase Count '+totalcount)
         }
         $("#Redo").prop('disabled', false);
+        $("#redocurrent").prop('disabled', true);
     }
     else{
         var keywords = tsequence[tsequence.length - 1].trim().split(' ')
@@ -291,6 +292,7 @@ $("#Next").click(function() {
         $('.rating').rating('setting', 'clearable', true);
         $("#Next").html('Next'); 
         startRating = true;
+        $("#redocurrent").prop('disabled', false);
     }
 })
 
@@ -307,6 +309,11 @@ $("#Redo").click(function(){
         $('#phraseCount').html('Phrase Count '+phrasecount)
     }
     $("#Redo").prop('disabled', true);
+})
+
+$("#redocurrent").click(function(){
+    clearContent();
+    $("#redocurrent").prop('disabled', true);
 })
 
 // $("#generate").click(function() {
