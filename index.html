@@ -49,6 +49,10 @@ In this study, we will focus on understanding what kind of information will be a
 For example, if you want to write a short sentence like "Let's have a quick drink tonight after the movie." Keywords that are very likely coming to your mind would be "drink", "tonight", "movie", and "quick". We want you to identify these keywords by typing them in the textbox below, and also rate them based on how important they are according to the semantic meaning of the whole sentence. 1 means the least important keyword in the sentence (e.g., "quick"), 5 means the most important (e.g., "drink", and/or "tonight"). 
 </div>
 </div>
+<div class="ui indicating tiny progress" data-value="1"  id="progress">
+  <div class="bar"></div>
+  <div class="label">Progress</div>
+</div>
 <div class="ui segment" id="Present">Loading...</div>
 <textarea class="ui raised segment" id="Transcribe" spellcheck="false"></textarea>
 <div class="ui fitted divider" style="border-color:white;"></div>
@@ -540,7 +544,6 @@ $(document).ready(function (){
   $('.ui.modal').modal({
     closable  : false})
   .modal('show');
-
 })
 $("#switch_lan").click(function(){
 if(lan==0){

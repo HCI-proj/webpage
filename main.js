@@ -71,6 +71,7 @@ $.ajax({
 //    shuffle(allphrases);
     PresentString = allphrases[phrasecount].replace(/^\s+|\s+$/g, '');
     $('#Present').html(PresentString);
+    init_progress()
 }
 });
 
@@ -264,7 +265,8 @@ $("#Next").click(function() {
         totalcount += 1
         console.log(totalcount)
         localStorage.setItem("count", phrasecount);
-
+        $('#progress').progress('set progress',totalcount)
+        
         if (phraselimit > 0 && totalcount >= phraselimit)
             $('#phraseCount').html('<inline style="color:red;"> Task Done!</inline>')
         
@@ -309,6 +311,7 @@ $("#Redo").click(function(){
         $('#phraseCount').html('Phrase Count '+phrasecount)
     }
     $("#Redo").prop('disabled', true);
+    $('#progress').progress('set progress',totalcount)
 })
 
 $("#redocurrent").click(function(){
@@ -877,4 +880,15 @@ function progress (json) {
         }
     }
     
+}
+function init_progress(){
+    $('#progress').progress({total: allphrases.length,
+        text: {
+          active  : '{value} of {total} Phrases',
+          success : '{total} Phrases Completed!'
+        }
+      });
+      $('#progress')
+      .progress('set progress',totalcount)
+    ;
 }
