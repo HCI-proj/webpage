@@ -12,6 +12,7 @@ var IF = 0;
 //vars related to phrase
 var phrasecount = 0;
 var totalcount = 0;
+var close_ins=0;
 //Read the local storage, how many sentences the user has completed so far, Continue the previous work
 if(! window.localStorage){
     alert("Your browser do not support localstorage! Please change a browser.");
@@ -180,6 +181,7 @@ $("#Transcribe").bind("mouseup", function() {
 //whenever there's a change happens in the transcribed string (e.g. an Action happens)
 //this function is triggered
 $("#Transcribe").bind("keyup click focus input propertychange", function() {
+    close_instruction()
     getCursorPosition(this);
     var currentVal = $(this).val();
     if (currentVal == oldVal) {
@@ -891,4 +893,12 @@ function init_progress(){
       $('#progress')
       .progress('set progress',totalcount)
     ;
+}
+function close_instruction(){
+    if(close_ins==0){
+    $('.ui.accordion').accordion('close', 0);
+    close_ins=1
+    }else{
+        return
+    }
 }
